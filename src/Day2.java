@@ -8,6 +8,7 @@ public class Day2 {
     List<String> data;
     int depth = 0;
     int position = 0;
+    int binaryDataLength;
 
     public int finalCalculation() {
         return depth * position;
