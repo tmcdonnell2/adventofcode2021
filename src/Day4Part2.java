@@ -40,7 +40,6 @@ public class Day4Part2 {
 
     public int solve() {
         BingoBoard currentBoard = null;
-        BingoBoard lastRemoved;
         int call;
         do {
             call = gameData.remove(0);
