@@ -3,6 +3,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class Day6 {
@@ -23,9 +24,13 @@ public class Day6 {
 
     private void solve() {
         int day = 0;
+        System.out.print("For how many days? >");
+        int FINAL_DAY = new Scanner(System.in).nextInt();
         long fishReadyToSpawn;
+        System.out.println();
+        System.out.println();
         System.out.println(Arrays.deepToString(graph));
-        while (day++ < 256) {
+        while (day++ < FINAL_DAY) {
             fishReadyToSpawn = graph[0][0];
             for (int i = 1; i <= NEW_FISH; i++) {
                 graph[i - 1][0] = graph[i][0];
