@@ -6,14 +6,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Day5 {
+public class Day5Part2 {
 
-    private final int GRID_LENGTH = 991;
+    private final int GRID_LENGTH = 1000;
 
     int[][] grid = new int[GRID_LENGTH][GRID_LENGTH];
-    List<Line> lines = new ArrayList<>();
+    List<LineP2> lines = new ArrayList<>();
 
-    Day5(String[] data) {
+    Day5Part2(String[] data) {
         List<String> splitCoordinateData = new ArrayList<>();
         for (String d : data) {
             splitCoordinateData.addAll(Arrays.stream(d.split(" "))
@@ -29,35 +29,35 @@ public class Day5 {
                     .boxed().toArray(Integer[]::new);
             lineCoords[i++] = new Coordinate(parsedCoords[0],parsedCoords[1]);
             if (lineCoords[1] != null) {
-                lines.add(new Line(lineCoords[0], lineCoords[1]));
+                lines.add(new LineP2(lineCoords[0], lineCoords[1]));
                 lineCoords[1] = null;
                 i = 0;
             }
         }
-
-        // get horz or vert lines only
-        lines = lines.stream().filter(l -> l.start.getX() == l.end.getX() || l.start.getY() == l.end.getY())
-                .collect(Collectors.toList());
     }
 
     private void solve() {
-        int startPoint;
-        int endPoint;
-        for (Line line : lines) {
-            if (line.isVertical) {
-                startPoint = line.start.getY();
-                endPoint = line.end.getY();
-                while (startPoint != endPoint + line.direction) {
-                    mark(line.start.getX(), startPoint);
-                    startPoint += line.direction;
+        int startPointX;
+        int endPointX;
+
+        int startPointY;
+        int endPointY;
+        for (LineP2 line : lines) {
+            startPointX = line.start.getX();
+            endPointX = line.end.getX();
+
+            startPointY = line.start.getY();
+            endPointY = line.end.getY();
+            mark(startPointX, startPointY);
+            while (startPointX != endPointX ||
+                    startPointY != endPointY) {
+                if (startPointX != endPointX + line.xDirection) {
+                    startPointX += line.xDirection;
                 }
-            } else { // horz
-                startPoint = line.start.getX();
-                endPoint = line.end.getX();
-                while (startPoint != endPoint + line.direction) {
-                    mark(startPoint, line.start.getY());
-                    startPoint += line.direction;
+                if (startPointY != endPointY + line.yDirection) {
+                    startPointY += line.yDirection;
                 }
+                mark(startPointX, startPointY);
             }
         }
     }
@@ -79,11 +79,11 @@ public class Day5 {
     }
 
     public static void main(String[] args) {
-        Day5 challenge = null;
+        Day5Part2 challenge = null;
         BufferedReader input;
         try {
             input = new BufferedReader(new FileReader("./data/Day5.txt"));
-            challenge = new Day5(input.lines().toArray(String[]::new));
+            challenge = new Day5Part2(input.lines().toArray(String[]::new));
         } catch (IOException e) {
             System.out.println("?_? where filegon");
         }
@@ -92,42 +92,20 @@ public class Day5 {
     }
 }
 
-class Coordinate {
-    private int x;
-    private int y;
-
-    public Coordinate(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-}
-
-class Line {
+class LineP2 {
     Coordinate start;
     Coordinate end;
-    boolean isVertical;
-    int direction;
+    int xDirection;
+    int yDirection;
 
-    Line(Coordinate... coords) {
+    LineP2(Coordinate... coords) {
         if (coords.length > 2) {
             return;
         }
         this.start = coords[0];
         this.end = coords[1];
 
-        // True being vertical (same x at points, y varies)
-        if ((isVertical = start.getX() == end.getX())) {
-            direction = (start.getY() < end.getY() ? 1 : -1);
-        } else {
-            direction = (start.getX() < end.getX() ? 1 : -1);
-        }
+        yDirection = Integer.compare(end.getY(), start.getY());
+        xDirection = Integer.compare(end.getX(), start.getX());
     }
 }
